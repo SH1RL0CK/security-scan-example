@@ -1,25 +1,82 @@
 import sqlite3
 
-from flask import Flask, request
+from flask import Flask, redirect, render_template, request, session
 
 app = Flask(__name__)
+app.secret_key = "super_secret_key"  # Geheim für Sessions
 
 
-def get_user_data(username):
+# Datenbank initialisieren
+def init_db():
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
-    query = f"SELECT * FROM users WHERE username = '{username}'"  # 🚨 SQL Injection-Schwachstelle
-    cursor.execute(query)
-    data = cursor.fetchall()
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE,
+            password TEXT,
+            role TEXT DEFAULT 'normal'  -- Benutzerrolle: 'admin' oder 'normal'
+        )
+    """
+    )
+    conn.commit()
+    # Beispielbenutzer hinzufügen
+    cursor.execute(
+        "INSERT OR IGNORE INTO users (username, password, role) VALUES ('admin', 'admin123', 'admin')"
+    )
+    cursor.execute(
+        "INSERT OR IGNORE INTO users (username, password, role) VALUES ('user', 'password', 'normal')"
+    )
+    conn.commit()
     conn.close()
-    return data
 
 
-@app.route("/user", methods=["GET"])
-def user():
-    username = request.args.get("username", "")
-    data = get_user_data(username)
-    return {"result": data}
+init_db()  # Datenbank beim Start initialisieren
+
+
+# Login-Seite
+@app.route("/", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        # Verwenden Sie parameterisierte Abfragen, um SQL-Injection zu verhindern
+        conn = sqlite3.connect("users.db")
+        cursor = conn.cursor()
+        query = "SELECT * FROM users WHERE username = ? AND password = ?"
+        cursor.execute(query, (username, password))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user:
+            session["username"] = username
+            session["role"] = user[3]  # Benutzerrolle speichern
+            return redirect("/dashboard")
+        else:
+            error = "Ungültige Anmeldeinformationen!"
+
+    return render_template("login.html", error=error)
+
+
+# Dashboard-Seite (nur nach Login erreichbar)
+@app.route("/dashboard")
+def dashboard():
+    if "username" not in session:
+        return redirect("/")
+    return render_template(
+        "dashboard.html", username=session["username"], role=session["role"]
+    )
+
+
+# Logout
+@app.route("/logout")
+def logout():
+    session.pop("username", None)
+    session.pop("role", None)
+    return redirect("/")
 
 
 if __name__ == "__main__":

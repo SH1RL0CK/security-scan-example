@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Dashboard</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            .card {
+                border: none;
+                border-radius: 10px;
+            }
+            .card .card-icon {
+                font-size: 3rem;
+                margin-bottom: 10px;
+            }
+            .admin-section {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container mt-5">
+            <!-- Welcome Section -->
+            <div class="text-center mb-4">
+                <h1>Willkommen, {{ username }}!</h1>
+                <p>Du bist erfolgreich eingeloggt.</p>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="row text-center mb-5">
+                <div class="col-md-4">
+                    <div class="card shadow-sm bg-primary text-white">
+                        <div class="card-body">
+                            <i class="fas fa-users card-icon"></i>
+                            <h5 class="card-title">Benutzer</h5>
+                            <p class="card-text display-4">120</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm bg-success text-white">
+                        <div class="card-body">
+                            <i class="fas fa-project-diagram card-icon"></i>
+                            <h5 class="card-title">Projekte</h5>
+                            <p class="card-text display-4">45</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow-sm bg-warning text-white">
+                        <div class="card-body">
+                            <i class="fas fa-tasks card-icon"></i>
+                            <h5 class="card-title">Aufgaben</h5>
+                            <p class="card-text display-4">230</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="mb-5">
+                <h2>Letzte Aktivitäten</h2>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <i class="fas fa-edit text-primary"></i>
+                        Projekt "Website Redesign" wurde aktualisiert.
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-plus text-success"></i>
+                        Neue Aufgabe "Datenbank-Backup" wurde hinzugefügt.
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-user text-warning"></i>
+                        Benutzer "Max Mustermann" hat sich registriert.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Admin Section -->
+            {% if role == "admin" %}
+            <div class="admin-section mb-5">
+                <h2>Admin-Bereich</h2>
+                <p>Exklusive Inhalte und Funktionen für Administratoren:</p>
+                <ul>
+                    <li>
+                        <i class="fas fa-user-shield text-danger"></i>
+                        Benutzerverwaltung
+                    </li>
+                    <li>
+                        <i class="fas fa-database text-info"></i>
+                        Datenbank-Backup
+                    </li>
+                    <li>
+                        <i class="fas fa-cogs text-secondary"></i>
+                        Systemeinstellungen
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-white text-center py-3">
+            <p>&copy; 2025 Dashboard. Alle Rechte vorbehalten.</p>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
