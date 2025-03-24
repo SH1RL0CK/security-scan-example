@@ -43,11 +43,11 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        # Verwenden Sie parameterisierte Abfragen, um SQL-Injection zu verhindern
+      # 🚨 SQL Injection-Schwachstelle 🚨
         conn = sqlite3.connect("users.db")
         cursor = conn.cursor()
-        query = "SELECT * FROM users WHERE username = ? AND password = ?"
-        cursor.execute(query, (username, password))
+        query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
+        cursor.execute(query)
         user = cursor.fetchone()
         conn.close()
 
